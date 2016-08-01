@@ -14,6 +14,6 @@ public class NumberProviderTest {
     int number = numberProvider.provideNumber();
 
     // then
-    assertThat(number).isEqualTo(42);
+    assertThat(number).isEqualTo(41);
   }
 }
