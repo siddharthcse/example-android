@@ -29,7 +29,7 @@ public class CalculatorTestSuccessful {
 
 	@Test
 	public void testSum() {
-		int result = calculator.sum(3, 3);
+		int result = calculator.sum(3, 4);
 
 		assertEquals(7, result);
 	}
