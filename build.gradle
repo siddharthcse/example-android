@@ -2,10 +2,11 @@
 buildscript {
   repositories {
     jcenter()
-  }
-      debug {
+       debug {
             testCoverageEnabled true
       }
+  }
+   
 
   dependencies {
     classpath 'com.android.tools.build:gradle:2.0.0'
