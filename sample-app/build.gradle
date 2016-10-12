@@ -45,5 +45,74 @@ dependencies {
   androidTestCompile supportTest.rules
 }
 
+    apply plugin: 'jacoco'
+    jacoco {
+        version "0.7.1.201405082137"
+    }
+
+ sourceSets {
+        main {
+            java.srcDirs = ['src/main/java', 'src/unitTest/java']
+            resources.srcDirs = ['src/main/resources', 'src/unitTest/java', 'src/androidTest/java']
+        }
+    }
+    jacoco {
+        version = "0.7.4.201502262128" }
+
+
+FileTree getJacocoClassDirs(List projects) {
+    def classDirs = fileTree(dir: "${buildDir}/classes/debug", exclude: '**//**//*R*.class')
+    projects.each {
+        def projBuildDir = project(it).buildDir
+        classDirs += fileTree(dir: "${projBuildDir}/classes/release", exclude: '**//**//*R*.class')
+    }
+    return classDirs
+}
+
+
+
+FileCollection getJacocoSrcDirs(List projects) {
+    Set srcDirs = android.sourceSets.main.java.srcDirs
+    projects.each {
+        def projDir = project(it).projectDir
+        srcDirs.add("${projDir}/src")
+    }
+    return files(srcDirs)
+}
+
+task jacocoTestReport(type: JacocoReport, dependsOn: connectedCheck) {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination "${buildDir}/reports/coverage"
+    }
+
+    def dependencies = []
+    classDirectories = getJacocoClassDirs(dependencies)
+    sourceDirectories = getJacocoSrcDirs(dependencies)
+    executionData = files("${buildDir}/jacoco/testDebug.exec")
+}
+
+task codeCoverageReport(type: JacocoReport) {
+
+
+    executionData fileTree(project.rootDir.absolutePath).include("**//*build/jacoco*//*.exec")
+
+    subprojects.each {
+        sourceSets it.sourceSets.main
+    }
+
+    reports {
+        xml.enabled true
+        html.enabled true
+        html.destination "${buildDir}/reports/jacoco"
+        csv.enabled false
+    }
+}
+
+
+codeCoverageReport.dependsOn {
+    subprojects*.test
+}
 
 
